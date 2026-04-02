@@ -7,24 +7,27 @@ table.insert(option_fns,
         tooltip =
         "Fixes ET working with Anubis by creating a 3rd OAtk field. Fixes Anubis OAtk distance based on casting angle."
     })
-table.insert(apply_fns, {
+table.insert(patch_fns, {
     key = "ETFix",
-    fn = function()
+    fn = function(plan)
         if not TraitData.DoubleExManaBoon then return end
-        backup(TraitData, "DoubleExManaBoon")
-        table.insert(TraitData.DoubleExManaBoon.PropertyChanges[1].FalseTraitNames, "StaffRaiseDeadAspect")
-        TraitData.DoubleExManaBoon.OnWeaponFiredFunctions = {
+        plan:appendUnique(
+            TraitData.DoubleExManaBoon.PropertyChanges[1],
+            "FalseTraitNames",
+            "StaffRaiseDeadAspect"
+        )
+        plan:set(TraitData.DoubleExManaBoon, "OnWeaponFiredFunctions", {
             ValidWeapons = { "WeaponStaffSwing5" },
             FunctionName = "CreateSecondAnubisWall",
             FunctionArgs = { Distance = 340 },
             ExcludeLinked = true,
-        }
+        })
     end
 })
 
 table.insert(hook_fns, function()
     modutil.mod.Path.Wrap("CreateSecondAnubisWall", function(baseFunc, weaponData, args, triggerArgs)
-        if not config.ETFix or not lib.isEnabled(config, public.definition.modpack) then
+        if not config.ETFix or not lib.isEnabled(public.store, public.definition.modpack) then
             return baseFunc(weaponData, args, triggerArgs)
         end
 

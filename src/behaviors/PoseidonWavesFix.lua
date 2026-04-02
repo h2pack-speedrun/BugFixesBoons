@@ -7,15 +7,17 @@ table.insert(option_fns,
         tooltip =
         "Fixes Poseidon waves on Axe special and Hidden Helix Torch."
     })
-table.insert(apply_fns, {
+table.insert(patch_fns, {
     key = "PoseidonWavesFix",
-    fn = function()
+    fn = function(plan)
         if not TraitData.PoseidonSpecialBoon then return end
-        backup(TraitData.PoseidonSpecialBoon.OnEnemyDamagedAction.Args, "MultihitProjectileWhitelist")
-        backup(TraitData.PoseidonSpecialBoon.OnEnemyDamagedAction.Args, "MultihitProjectileConditions")
         local args = TraitData.PoseidonSpecialBoon.OnEnemyDamagedAction.Args
-        table.insert(args.MultihitProjectileWhitelist, "ProjectileAxeSpecial")
-        args.MultihitProjectileConditions.ProjectileAxeSpecial = { Count = 4, Window = 0.3 }
-        args.MultihitProjectileConditions.ProjectileTorchOrbit.Count = 4
+        plan:appendUnique(args, "MultihitProjectileWhitelist", "ProjectileAxeSpecial")
+        plan:set(args.MultihitProjectileConditions, "ProjectileAxeSpecial", { Count = 4, Window = 0.3 })
+        plan:transform(args.MultihitProjectileConditions, "ProjectileTorchOrbit", function(value)
+            local copy = rom.game.DeepCopyTable(value or {})
+            copy.Count = 4
+            return copy
+        end)
     end
 })

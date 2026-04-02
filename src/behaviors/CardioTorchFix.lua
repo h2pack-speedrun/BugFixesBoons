@@ -7,14 +7,12 @@ table.insert(option_fns,
         tooltip =
         "Fixes Cardio Gain interactions with Torch specials."
     })
-table.insert(apply_fns, {
+table.insert(patch_fns, {
     key = "CardioTorchFix",
-    fn = function()
+    fn = function(plan)
         if not TraitData.HestiaManaBoon then return end
-        backup(TraitData.HestiaManaBoon.OnEnemyDamagedAction.Args, "MultihitProjectileWhitelist")
-        backup(TraitData.HestiaManaBoon.OnEnemyDamagedAction.Args, "MultihitProjectileConditions")
         local args = TraitData.HestiaManaBoon.OnEnemyDamagedAction.Args
-        table.insert(args.MultihitProjectileWhitelist, "ProjectileTorchOrbit")
-        args.MultihitProjectileConditions.ProjectileTorchOrbit = { Cooldown = 0.01 }
+        plan:appendUnique(args, "MultihitProjectileWhitelist", "ProjectileTorchOrbit")
+        plan:set(args.MultihitProjectileConditions, "ProjectileTorchOrbit", { Cooldown = 0.01 })
     end
 })

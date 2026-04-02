@@ -7,10 +7,9 @@ table.insert(option_fns,
         tooltip =
         "Fixes OCast moves not counting as cast damage."
     })
-table.insert(apply_fns, {
+table.insert(patch_fns, {
     key = "OmegaCastFix",
-    fn = function()
-        backup(WeaponSets, "CastProjectileNames")
+    fn = function(plan)
         local missingCastProjectiles = {
             "ApolloCastRapid",
             "AresProjectile",
@@ -19,7 +18,7 @@ table.insert(apply_fns, {
             "AthenaCastProjectile",
         }
         for _, projectileName in ipairs(missingCastProjectiles) do
-            table.insert(WeaponSets.CastProjectileNames, projectileName)
+            plan:appendUnique(WeaponSets, "CastProjectileNames", projectileName)
         end
     end
 })

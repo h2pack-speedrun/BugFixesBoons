@@ -7,18 +7,19 @@ table.insert(option_fns,
         tooltip =
         "Fixes Shimmering Moonshot not applying damage bonus to omega special."
     })
-table.insert(apply_fns, {
+table.insert(patch_fns, {
     key = "ShimmeringFix",
-    fn = function()
+    fn = function(plan)
         if not TraitData.StaffJumpSpecialTrait then return end
-        backup(TraitData.StaffJumpSpecialTrait.AddOutgoingDamageModifiers, "ProjectileName")
-        backup(TraitData.StaffJumpSpecialTrait.AddOutgoingDamageModifiers, "ValidProjectiles")
-        backup(TraitData.StaffJumpSpecialTrait, "PropertyChanges")
-        TraitData.StaffJumpSpecialTrait.AddOutgoingDamageModifiers.ProjectileName = nil
-        TraitData.StaffJumpSpecialTrait.AddOutgoingDamageModifiers.ValidProjectiles = { "ProjectileStaffBall",
-            "ProjectileStaffBallCharged" }
-        for _, propertyChange in ipairs(TraitData.StaffJumpSpecialTrait.PropertyChanges) do
-            propertyChange.ProjectileNames = { "ProjectileStaffBall", "ProjectileStaffBallCharged" }
-        end
+        local mods = TraitData.StaffJumpSpecialTrait.AddOutgoingDamageModifiers
+        plan:set(mods, "ProjectileName", nil)
+        plan:set(mods, "ValidProjectiles", { "ProjectileStaffBall", "ProjectileStaffBallCharged" })
+        plan:transform(TraitData.StaffJumpSpecialTrait, "PropertyChanges", function(list)
+            local copy = rom.game.DeepCopyTable(list or {})
+            for _, propertyChange in ipairs(copy) do
+                propertyChange.ProjectileNames = { "ProjectileStaffBall", "ProjectileStaffBallCharged" }
+            end
+            return copy
+        end)
     end
 })

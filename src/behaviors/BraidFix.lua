@@ -7,14 +7,12 @@ table.insert(option_fns,
         tooltip =
         "Fixes Braid of Atlas to properly buff casts."
     })
-table.insert(apply_fns, {
+table.insert(patch_fns, {
     key = "BraidFix",
-    fn = function()
+    fn = function(plan)
         if not TraitData.TemporaryImprovedCastTrait then return end
-        backup(TraitData.TemporaryImprovedCastTrait.AddOutgoingDamageModifiers, "ValidProjectiles")
-        backup(TraitData.TemporaryImprovedCastTrait.AddOutgoingDamageModifiers, "WeaponOrProjectileRequirement")
-        TraitData.TemporaryImprovedCastTrait.AddOutgoingDamageModifiers.ValidProjectiles = WeaponSets
-            .CastProjectileNames
-        TraitData.TemporaryImprovedCastTrait.AddOutgoingDamageModifiers.WeaponOrProjectileRequirement = true
+        local mods = TraitData.TemporaryImprovedCastTrait.AddOutgoingDamageModifiers
+        plan:set(mods, "ValidProjectiles", WeaponSets.CastProjectileNames)
+        plan:set(mods, "WeaponOrProjectileRequirement", true)
     end
 })
