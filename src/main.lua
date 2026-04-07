@@ -66,9 +66,9 @@ public.definition = {
     id           = "BugFixesBoons",
     name         = "Bug Fixes: Boons & Hammers",
     category     = "Bug Fixes",
-    group        = "Boons & Hammers",
+    subgroup     = "Boons & Hammers",
     tooltip      = "Collection of bug fixes for boons and hammers.",
-    default      = true,
+    default      = dataDefaults.Enabled,
     affectsRunData = true,
 }
 
@@ -117,4 +117,3 @@ end)
 local uiCallback = lib.standaloneUI(public.definition, store)
 ---@diagnostic disable-next-line: redundant-parameter
 rom.gui.add_to_menu_bar(uiCallback)
-
